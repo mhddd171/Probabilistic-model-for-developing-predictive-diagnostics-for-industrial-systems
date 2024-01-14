@@ -1,0 +1,33 @@
+.titel{
+	font-family: sans-serif;
+	color: #dc2d5e;
+}
+.container {
+	position: relative;
+	width: 400px;
+}
+.image{
+	display: block;
+	width: 400px;
+}
+.overlay{
+	position: absolute;
+	transition:.9s;
+	opacity: 1;
+	width: 100%;
+}
+
+.text{
+	color: #E6E3E9;
+	font-family: sans-serif;
+	position: absolute;
+	top: 46%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 30px;
+}
+.overlayD{
+	height: 100%;
+	top: 0;
+	background-color: rgba(0,0,0,0.6);
+}

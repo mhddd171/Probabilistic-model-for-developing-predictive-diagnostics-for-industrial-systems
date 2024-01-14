@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enter Scenarios and Probabilities</title>
+    <style type="text/css">
+        body {
+            margin: 0; font-family: 'Calibri', sans-serif; background-color: #C6B5D6;  color: #E6E3E9;
+        }
+
+        form {
+            width: 700px; margin: auto; margin-top: 50px; background-color: #333; padding: 20px; border-radius: 20px; text-align: center; font-size: 20px;
+        }
+
+        input { margin-bottom: 10px; width: 70%; padding: 10px; border: none; border-radius: 10px;
+        }
+
+        .fault-node { display: flex; justify-content: space-between; align-items: center; margin: 10px; margin-right: 95px; margin-left: 45px;
+        }
+
+        .fault-node > label { margin-right: 20px; margin-left: 50px;
+        }
+
+        button { background-color: #ECB1D1; border: none; border-radius: 20px; color: #333; width: 100px; height: 25px; font-size: 15px; margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div style="position: fixed; left: 0; top: 0; border-top: 0; z-index: 100; background-color:#333; width: 100%; border-bottom: solid white 3px; height: 75px">
+    <center>
+        <font face="Calibri" color="#E6E3E9" style="padding: 7px 15px; display: inline-block; font-size: 43px;">ENTER SCENARIOS</font>
+    </center>
+</div><br><br>
+
+<form action="scenarioInsertDB.php" method="POST" id="scenarioForm">
+    <label for="observation_node">Issue:</label><br>
+    <input type="text" id="observation_node" name="observation_node" required><br>
+
+    <div id="faultNodesContainer">
+        <div class="fault-node">
+            <label for="fault_description">Fault:</label>
+            <input type="text" name="fault_description[]" required>
+
+            <label for="fault_probability_true">Probability:</label>
+            <input type="number" name="fault_probability_true[]" step="0.01" min="0" max="1" required>
+        </div>
+    </div>
+
+    <button type="button" onclick="addFaultNode()" style="width: 120px;">Add Fault</button><br>
+    <button type="button" onclick="removeFaultNode()" style="width: 120px;">Remove Fault</button><br>
+
+    <button type="submit" style="background-color: #726F6F; color: #E6E3E9; width: 120px;">Submit</button><br><br>
+    <a href="expertServices.php"><button type="button">BACK</button></a>
+</form>
+
+<script>
+    document.getElementById("scenarioForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const allFaultNodes = document.querySelectorAll(".fault-node");
+        let allProbabilitiesValid = true;
+
+        allFaultNodes.forEach(function(node) {
+            const probabilityTrueInput = node.querySelector("input[name='fault_probability_true[]']");
+            const probabilityTrueValue = parseFloat(probabilityTrueInput.value) || 0;
+
+            if (probabilityTrueValue < 0 || probabilityTrueValue > 1) {
+                allProbabilitiesValid = false;
+                alert("The 'Probability' for each fault must be between 0 and 1.");
+                return;
+            }
+        });
+
+        if (!allProbabilitiesValid) {
+            return; 
+        }
+
+        event.target.submit();
+    });
+
+    function addFaultNode() {
+        const container = document.getElementById("faultNodesContainer");
+        const faultNodeDiv = document.createElement("div");
+        faultNodeDiv.className = "fault-node";
+
+        const faultLabelNode = document.createElement("label");
+        faultLabelNode.textContent = "Fault:";
+        faultNodeDiv.appendChild(faultLabelNode);
+        faultNodeDiv.appendChild(document.createElement("br"));
+
+        const faultInputNode = document.createElement("input");
+        faultInputNode.type = "text";
+        faultInputNode.name = "fault_description[]";
+        faultInputNode.required = true;
+        faultNodeDiv.appendChild(faultInputNode);
+
+        const probabilityTrueLabelNode = document.createElement("label");
+        probabilityTrueLabelNode.textContent = "Probability:";
+        faultNodeDiv.appendChild(probabilityTrueLabelNode);
+
+        const probabilityTrueInputNode = document.createElement("input");
+        probabilityTrueInputNode.type = "number";
+        probabilityTrueInputNode.name = "fault_probability_true[]";
+        probabilityTrueInputNode.step = "0.01";
+        probabilityTrueInputNode.min = "0";
+        probabilityTrueInputNode.max = "1";
+        probabilityTrueInputNode.required = true;
+        faultNodeDiv.appendChild(probabilityTrueInputNode);
+
+        container.appendChild(faultNodeDiv);
+    }
+
+    function removeFaultNode() {
+        const container = document.getElementById("faultNodesContainer");
+        const faultNodes = container.getElementsByClassName("fault-node");
+        if (faultNodes.length > 1) {
+            container.removeChild(faultNodes[faultNodes.length - 1]);
+        } else {
+            alert("Cannot remove the last fault.");
+        }
+    }
+</script>
+
+</body>
+</html>
